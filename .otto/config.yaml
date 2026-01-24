@@ -1,0 +1,4 @@
+otto:
+  commit_interval: 5         # Commit progress every N tasks
+  max_duration_hours: 4      # Session timeout
+  self_improve: true         # Run self-improvement cycles at each commit (on/off)

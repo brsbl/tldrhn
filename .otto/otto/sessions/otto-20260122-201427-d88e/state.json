@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "session_id": "otto-20260122-201427-d88e",
+  "product_spec_id": "tldrhn-webapp-a1b2",
+  "status": "completed",
+  "current_phase": "summary",
+
+  "timestamps": {
+    "started_at": "2026-01-22T20:14:27Z",
+    "last_heartbeat": "2026-01-22T20:14:27Z",
+    "last_checkpoint": null
+  },
+
+  "product_tasks": {
+    "total": 30,
+    "completed": 30,
+    "skipped": 0,
+    "current_task_id": null,
+    "current_task_started_at": null
+  },
+
+  "improvement": {
+    "cycles_run": 1,
+    "current_cycle_tasks_completed": 0,
+    "cycle_history": [
+      {
+        "cycle": 1,
+        "triggered_after_task": 14,
+        "improvements_found": 0,
+        "tasks_executed": 0
+      }
+    ]
+  },
+
+  "guard_rails": {
+    "consecutive_failures": 0,
+    "total_tasks_executed": 30,
+    "feedback_rotations": 0
+  },
+
+  "recovery": {
+    "can_resume": true,
+    "last_successful_task_id": null,
+    "last_error": null,
+    "services_failed": []
+  },
+
+  "commits": {
+    "total": 4,
+    "last_commit_sha": "5fe9378",
+    "history": ["588cdf6", "8d388a5", "5fe9378"]
+  },
+
+  "integrations": {
+    "browser_available": true,
+    "report_available": true,
+    "doc_available": false
+  }
+}

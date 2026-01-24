@@ -1,0 +1,19 @@
+name: Refresh Cache
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger cache refresh
+        run: |
+          curl -X POST "$APP_URL/api/refresh" \
+            -H "Content-Type: application/json" \
+            --fail --silent --show-error
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
