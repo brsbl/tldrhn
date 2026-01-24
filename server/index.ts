@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import type { Story, Comment, FeedType } from '../src/types/index.js';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import type { Story, FeedType } from '../src/types/index.js';
 import { FEED_TYPES } from '../src/types/index.js';
 import { fetchFeedStories, fetchStory, getHNUrl, HNStory } from './lib/hn-api.js';
 import { scrapeArticle } from './lib/scraper.js';
@@ -10,8 +12,44 @@ import { generateSummary } from './lib/summarizer.js';
 import { getTopComment } from './lib/comments.js';
 import { screenshotLimit, scrapeLimit, llmLimit } from './lib/concurrency.js';
 import { cache, CACHE_TTL_MS } from './lib/cache.js';
+import { parseAllowedOrigins, isOriginAllowed, validateApiKey } from './lib/config.js';
 
 const app = express();
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = parseAllowedOrigins(process.env.ALLOWED_ORIGINS);
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      connectSrc: ["'self'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Allow embedding screenshots
+}));
+
+// Rate limiting - 100 requests per 15 minutes per IP
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/', apiLimiter);
+
+// HTTPS redirect for production (behind proxy like Vercel)
+app.use((req, res, next) => {
+  if (isProduction && req.headers['x-forwarded-proto'] === 'http') {
+    return res.redirect(301, `https://${req.headers.host}${req.url}`);
+  }
+  next();
+});
 
 // Cache key prefix for stories response (per feed)
 const getStoriesCacheKey = (feed: FeedType) => `stories:${feed}`;
@@ -20,11 +58,10 @@ const PORT = process.env.PORT || 3001;
 // Batch size for parallel processing (to avoid rate limiting)
 const BATCH_SIZE = 5;
 
-// Configure CORS to allow requests from Vite dev server (any port)
+// Configure CORS
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests from localhost on any port, or no origin (e.g., curl)
-    if (!origin || origin.startsWith('http://localhost:')) {
+    if (isOriginAllowed(origin, allowedOrigins, isProduction)) {
       callback(null, true);
     } else {
       callback(new Error('CORS not allowed'));
@@ -194,8 +231,16 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// POST /api/refresh endpoint - clears cache and signals refresh
-app.post('/api/refresh', (_req, res) => {
+// POST /api/refresh endpoint - clears cache and signals refresh (protected)
+app.post('/api/refresh', (req, res) => {
+  const refreshApiKey = process.env.REFRESH_API_KEY;
+  const providedKey = (req.headers['x-api-key'] as string) || req.headers['authorization']?.replace('Bearer ', '');
+
+  if (!validateApiKey(providedKey, refreshApiKey)) {
+    res.status(401).json({ error: 'Unauthorized: Invalid or missing API key' });
+    return;
+  }
+
   console.log('[refresh] Manual refresh triggered');
   cache.clear();
   res.json({ success: true, message: 'Cache cleared', timestamp: new Date().toISOString() });
