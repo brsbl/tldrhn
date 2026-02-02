@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import type { Story } from '../types';
 
 interface StoryCardProps {
@@ -68,8 +69,8 @@ export function StoryCard({
 
   return (
     <article
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200 ${
-        isSelected ? 'ring-2 ring-orange-500 ring-offset-2 dark:ring-offset-gray-900' : ''
+      className={`bg-white dark:bg-neutral-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200 ${
+        isSelected ? 'ring-2 ring-orange-500 ring-offset-2 dark:ring-offset-neutral-900' : ''
       }`}
       data-story-index={index}
       aria-setsize={ariaSetsize}
@@ -80,7 +81,7 @@ export function StoryCard({
         href={articleUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="block aspect-video overflow-hidden bg-gray-100 dark:bg-gray-700"
+        className="block aspect-video overflow-hidden bg-gray-100 dark:bg-neutral-700"
       >
         {screenshotUrl && !imageError ? (
           <img
@@ -91,7 +92,7 @@ export function StoryCard({
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
+          <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-neutral-500">
             <svg
               className="w-12 h-12"
               fill="none"
@@ -124,13 +125,16 @@ export function StoryCard({
           </a>
         </h2>
 
-        {/* Summary */}
+        {/* Summary - sanitized with DOMPurify for safe HTML rendering */}
         {summary && (
-          <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-3">{summary}</p>
+          <div
+            className="text-gray-600 dark:text-neutral-300 text-sm mb-3 line-clamp-3 [&_a]:text-orange-600 [&_a]:underline [&_code]:bg-gray-100 [&_code]:dark:bg-neutral-700 [&_code]:px-1 [&_code]:rounded"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
+          />
         )}
 
         {/* Metadata row */}
-        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-neutral-400">
           <div className="flex items-center gap-3">
             {/* Points */}
             <span className="flex items-center gap-1">
@@ -178,7 +182,7 @@ export function StoryCard({
           {/* Time ago */}
           <time
             dateTime={new Date(time * 1000).toISOString()}
-            className="text-gray-400 dark:text-gray-500"
+            className="text-gray-400 dark:text-neutral-500"
             title={new Date(time * 1000).toLocaleString()}
           >
             {timeAgo}

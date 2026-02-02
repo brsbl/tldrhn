@@ -1,12 +1,12 @@
 # TLDR HN
 
-A visual Hacker News reader that displays website screenshots and AI-generated summaries alongside top community comments.
+A visual Hacker News reader that displays website screenshots and article excerpts alongside top community comments.
 
 ## Features
 
 - **Website Screenshots**: Captures live screenshots of linked articles using Playwright
-- **AI Summaries**: Generates concise TLDR summaries using OpenAI
-- **Top Comments**: Displays the highest-scored community comment for each story
+- **Article Excerpts**: Displays the first ~200 characters of article content
+- **Top Comments**: Shows the highest-scored community comment for each story
 - **Multiple Feeds**: Browse Top, New, and Show HN stories
 - **Dark Mode**: System-aware dark mode toggle
 - **Keyboard Navigation**: Navigate stories with j/k keys, open with Enter
@@ -17,8 +17,7 @@ A visual Hacker News reader that displays website screenshots and AI-generated s
 |-------|------------|
 | **Frontend** | React 19, TypeScript, Vite, Tailwind CSS |
 | **Backend** | Express.js, Playwright, Cheerio |
-| **AI** | OpenAI GPT for summarization |
-| **Deployment** | Vercel |
+| **Hosting** | Railway, Render, or Fly.io (requires Playwright support) |
 
 ## Architecture
 
@@ -28,7 +27,7 @@ A visual Hacker News reader that displays website screenshots and AI-generated s
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
 │  │  FeedTabs   │  │ StoryGrid   │  │     StoryCard           │  │
 │  │  (top/new/  │  │ (j/k nav)   │  │  - Screenshot           │  │
-│  │   show)     │  │             │  │  - Summary              │  │
+│  │   show)     │  │             │  │  - Excerpt              │  │
 │  └─────────────┘  └─────────────┘  │  - TopComment           │  │
 │                                     └─────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
@@ -47,8 +46,8 @@ A visual Hacker News reader that displays website screenshots and AI-generated s
 │              ▼               ▼               ▼                   │
 │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐        │
 │  │   Scraper     │  │  Screenshot   │  │  Summarizer   │        │
-│  │  (Cheerio)    │  │ (Playwright)  │  │   (OpenAI)    │        │
-│  │  limit: 5     │  │  limit: 3     │  │   limit: 5    │        │
+│  │  (Cheerio)    │  │ (Playwright)  │  │ (text excerpt)│        │
+│  │  limit: 5     │  │  limit: 3     │  │               │        │
 │  └───────────────┘  └───────────────┘  └───────────────┘        │
 └─────────────────────────────────────────────────────────────────┘
                               │
@@ -63,15 +62,10 @@ A visual Hacker News reader that displays website screenshots and AI-generated s
    git clone <repo-url>
    cd tldrhn
    npm install
+   npx playwright install chromium
    ```
 
-2. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your OPENAI_API_KEY
-   ```
-
-3. **Start development servers**
+2. **Start development servers**
    ```bash
    # Terminal 1: Backend
    npm run server
@@ -80,7 +74,7 @@ A visual Hacker News reader that displays website screenshots and AI-generated s
    npm run dev
    ```
 
-4. **Open browser**
+3. **Open browser**
    Navigate to `http://localhost:5173`
 
 ## API Endpoints
@@ -102,10 +96,11 @@ tldrhn/
 │       ├── cache.ts       # In-memory cache with TTL
 │       ├── comments.ts    # HN comment fetching
 │       ├── concurrency.ts # p-limit concurrency controls
+│       ├── config.ts      # Environment config helpers
 │       ├── hn-api.ts      # Hacker News API client
 │       ├── scraper.ts     # Article content extraction
 │       ├── screenshot.ts  # Playwright screenshot capture
-│       ├── summarizer.ts  # OpenAI summary generation
+│       ├── summarizer.ts  # Text excerpt generation
 │       └── url-validator.ts # SSRF protection
 ├── src/
 │   ├── App.tsx            # Main app component
@@ -122,7 +117,6 @@ tldrhn/
 │   │   └── useStories.ts
 │   └── types/
 │       └── index.ts       # TypeScript interfaces
-├── .env.example
 ├── package.json
 └── vite.config.ts
 ```
@@ -145,7 +139,6 @@ The application implements several security measures:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENAI_API_KEY` | Yes | OpenAI API key for summaries |
 | `PORT` | No | Server port (default: 3001) |
 | `NODE_ENV` | No | Environment (development/production) |
 | `REFRESH_API_KEY` | Prod | API key for /api/refresh endpoint |
@@ -175,15 +168,26 @@ npm run build
 
 # Lint code
 npm run lint
+
+# Run tests
+npm test
 ```
 
 ## Deployment
 
-This project is configured for Vercel deployment. The `vercel.json` configures the Express server as a serverless function.
+**Note**: This project uses Playwright for screenshots, which requires a persistent server environment. Serverless platforms (Vercel, Netlify Functions) won't work.
 
-```bash
-vercel deploy
-```
+### Recommended Platforms
+
+- **Railway**: `railway init && railway up`
+- **Render**: Connect repo, set build command to `npm install && npx playwright install chromium && npm run build`
+- **Fly.io**: `fly launch && fly deploy`
+
+### Required Setup
+
+1. Set environment variables (see table above)
+2. Ensure Playwright browsers are installed during build: `npx playwright install chromium`
+3. Start command: `npm run server`
 
 ## License
 

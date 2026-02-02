@@ -10,7 +10,7 @@ import { scrapeArticle } from './lib/scraper.js';
 import { captureScreenshot } from './lib/screenshot.js';
 import { generateSummary } from './lib/summarizer.js';
 import { getTopComment } from './lib/comments.js';
-import { screenshotLimit, scrapeLimit, llmLimit } from './lib/concurrency.js';
+import { screenshotLimit, scrapeLimit } from './lib/concurrency.js';
 import { cache, CACHE_TTL_MS } from './lib/cache.js';
 import { parseAllowedOrigins, isOriginAllowed, validateApiKey } from './lib/config.js';
 
@@ -92,13 +92,13 @@ async function processStory(hnStory: HNStory): Promise<Story | null> {
       hnStory.kids ? getTopComment(hnStory.kids) : Promise.resolve(null),
     ]);
 
-    // Generate summary (depends on article text, with LLM concurrency limit)
+    // Generate summary from article text
     let summary = '';
     if (articleText) {
-      summary = await llmLimit(() => generateSummary(articleText, hnStory.title));
+      summary = generateSummary(articleText);
     } else if (hnStory.text) {
       // For Ask HN / Show HN text posts, use the story text
-      summary = await llmLimit(() => generateSummary(hnStory.text, hnStory.title));
+      summary = generateSummary(hnStory.text);
     } else if (url) {
       // Fallback for failed scrapes: provide a read more prompt with domain
       try {

@@ -1,7 +1,22 @@
 {
-  "name": "temp-proj",
-  "private": true,
-  "version": "0.0.0",
+  "name": "tldrhn",
+  "version": "1.0.0",
+  "description": "A visual Hacker News reader with screenshots and article excerpts",
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/tldrhn"
+  },
+  "keywords": [
+    "hacker-news",
+    "hn",
+    "news-reader",
+    "screenshots",
+    "react",
+    "typescript"
+  ],
+  "private": false,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -20,7 +35,6 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
-    "openai": "^6.16.0",
     "p-limit": "^7.2.0",
     "playwright": "^1.57.0",
     "react": "^19.2.0",

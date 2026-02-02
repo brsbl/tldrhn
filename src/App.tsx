@@ -68,7 +68,7 @@ function App() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-neutral-900 transition-colors">
       {/* Header */}
       <Header isDark={isDark} onToggleDark={toggleDark} />
 
@@ -98,8 +98,8 @@ function App() {
       <KeyboardHelpModal isOpen={showHelp} onClose={handleCloseHelp} />
 
       {/* Keyboard shortcut hint */}
-      <div className="fixed bottom-4 right-4 text-xs text-gray-400 dark:text-gray-500">
-        Press <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-gray-700 rounded font-mono">?</kbd> for keyboard shortcuts
+      <div className="fixed bottom-4 right-4 text-xs text-gray-400 dark:text-neutral-500">
+        Press <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-neutral-700 rounded font-mono">?</kbd> for keyboard shortcuts
       </div>
     </div>
   );

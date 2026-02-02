@@ -28,17 +28,17 @@ export function KeyboardHelpModal({ isOpen, onClose }: KeyboardHelpModalProps) {
       aria-labelledby="keyboard-help-title"
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden"
+        className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+        <div className="bg-gray-50 dark:bg-neutral-700 px-6 py-4 border-b border-gray-200 dark:border-neutral-600 flex items-center justify-between">
           <h2 id="keyboard-help-title" className="text-lg font-semibold text-gray-900 dark:text-white">
             Keyboard Shortcuts
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-neutral-200 transition-colors"
             aria-label="Close help modal"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,19 +57,19 @@ export function KeyboardHelpModal({ isOpen, onClose }: KeyboardHelpModalProps) {
           <ul className="space-y-3">
             {shortcuts.map(({ key, description }) => (
               <li key={key} className="flex items-center gap-4">
-                <kbd className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm font-mono font-semibold text-gray-700 dark:text-gray-200">
+                <kbd className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-neutral-700 border border-gray-300 dark:border-neutral-600 rounded text-sm font-mono font-semibold text-gray-700 dark:text-neutral-200">
                   {key}
                 </kbd>
-                <span className="text-gray-600 dark:text-gray-300">{description}</span>
+                <span className="text-gray-600 dark:text-neutral-300">{description}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 dark:bg-gray-700 px-6 py-3 border-t border-gray-200 dark:border-gray-600">
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-            Press <kbd className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs font-mono">Esc</kbd> or click outside to close
+        <div className="bg-gray-50 dark:bg-neutral-700 px-6 py-3 border-t border-gray-200 dark:border-neutral-600">
+          <p className="text-sm text-gray-500 dark:text-neutral-400 text-center">
+            Press <kbd className="px-1.5 py-0.5 bg-gray-200 dark:bg-neutral-600 rounded text-xs font-mono">Esc</kbd> or click outside to close
           </p>
         </div>
       </div>
