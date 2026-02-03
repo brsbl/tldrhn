@@ -7,6 +7,7 @@ interface UseKeyboardShortcutsOptions {
   setSelectedIndex: (index: number | ((prev: number) => number)) => void;
   onRefresh: () => void;
   onShowHelp: () => void;
+  disabled?: boolean;
 }
 
 /**
@@ -26,9 +27,15 @@ export function useKeyboardShortcuts({
   setSelectedIndex,
   onRefresh,
   onShowHelp,
+  disabled = false,
 }: UseKeyboardShortcutsOptions) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      // Don't handle shortcuts when disabled (e.g., modal is open)
+      if (disabled) {
+        return;
+      }
+
       // Don't handle shortcuts when typing in input/textarea
       const target = event.target as HTMLElement;
       if (
@@ -88,7 +95,7 @@ export function useKeyboardShortcuts({
           break;
       }
     },
-    [stories, selectedIndex, setSelectedIndex, onRefresh, onShowHelp]
+    [stories, selectedIndex, setSelectedIndex, onRefresh, onShowHelp, disabled]
   );
 
   useEffect(() => {

@@ -1,51 +1,46 @@
+import { Sun, Moon, Monitor } from 'lucide-react';
+import type { Theme } from '../hooks/useDarkMode';
+
 interface DarkModeToggleProps {
-  isDark: boolean;
+  theme: Theme;
   onToggle: () => void;
 }
 
+const THEME_LABELS: Record<Theme, string> = {
+  light: 'Light mode',
+  dark: 'Dark mode',
+  system: 'System theme',
+};
+
+const NEXT_THEME: Record<Theme, Theme> = {
+  system: 'light',
+  light: 'dark',
+  dark: 'system',
+};
+
 /**
- * DarkModeToggle - Simple toggle button for switching between light and dark mode
+ * DarkModeToggle - Toggle button for switching between light, dark, and system themes
+ * Uses Sun/Moon/Monitor icons from lucide-react
  */
-export function DarkModeToggle({ isDark, onToggle }: DarkModeToggleProps) {
+export function DarkModeToggle({ theme, onToggle }: DarkModeToggleProps) {
+  const nextTheme = NEXT_THEME[theme];
+  const label = `${THEME_LABELS[theme]} (click for ${THEME_LABELS[nextTheme].toLowerCase()})`;
+
   return (
     <button
       onClick={onToggle}
-      className="p-2 rounded-lg bg-gray-100 dark:bg-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-600 transition-colors"
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-neutral-700 transition-colors"
+      aria-label={label}
+      title={label}
     >
-      {isDark ? (
-        // Sun icon for dark mode (click to switch to light)
-        <svg
-          className="w-5 h-5 text-yellow-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-      ) : (
-        // Moon icon for light mode (click to switch to dark)
-        <svg
-          className="w-5 h-5 text-gray-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-          />
-        </svg>
+      {theme === 'dark' && (
+        <Moon className="w-4 h-4 text-slate-600 dark:text-neutral-100" />
+      )}
+      {theme === 'light' && (
+        <Sun className="w-4 h-4 text-slate-600 dark:text-neutral-100" />
+      )}
+      {theme === 'system' && (
+        <Monitor className="w-4 h-4 text-slate-600 dark:text-neutral-100" />
       )}
     </button>
   );

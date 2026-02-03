@@ -1,6 +1,6 @@
 /**
  * Simple in-memory cache with TTL (Time To Live) support.
- * Used to cache expensive API responses like processed stories.
+ * Supports stale-while-revalidate pattern for fast responses.
  */
 
 interface CacheEntry<T> {
@@ -8,8 +8,16 @@ interface CacheEntry<T> {
   expiresAt: number;
 }
 
+export interface CacheResult<T> {
+  data: T | null;
+  status: 'fresh' | 'stale' | 'miss';
+}
+
 // Default TTL: 30 minutes
 const DEFAULT_TTL_MS = 1800000;
+
+// Stale grace period: 1 hour (how long to keep stale data for revalidation)
+const STALE_GRACE_MS = 3600000;
 
 class Cache {
   private store: Map<string, CacheEntry<unknown>> = new Map();
@@ -19,25 +27,42 @@ class Cache {
    * Returns null if the key doesn't exist or has expired.
    */
   get<T>(key: string): T | null {
+    const result = this.getWithMeta<T>(key);
+    return result.status === 'fresh' ? result.data : null;
+  }
+
+  /**
+   * Get a value with metadata about freshness.
+   * Returns stale data if available (for stale-while-revalidate pattern).
+   */
+  getWithMeta<T>(key: string): CacheResult<T> {
     const entry = this.store.get(key);
 
     if (!entry) {
       console.log(`[cache] MISS: "${key}" (not found)`);
-      return null;
+      return { data: null, status: 'miss' };
     }
 
     const now = Date.now();
+
     if (now >= entry.expiresAt) {
-      // Entry has expired, remove it
+      // Entry has expired - check if within stale grace period
+      const staleAge = now - entry.expiresAt;
+      if (staleAge < STALE_GRACE_MS) {
+        const staleMin = Math.round(staleAge / 60000);
+        console.log(`[cache] STALE: "${key}" (expired ${staleMin} min ago, serving stale)`);
+        return { data: entry.data as T, status: 'stale' };
+      }
+      // Beyond grace period, remove entry
       this.store.delete(key);
-      console.log(`[cache] MISS: "${key}" (expired)`);
-      return null;
+      console.log(`[cache] MISS: "${key}" (expired beyond grace period)`);
+      return { data: null, status: 'miss' };
     }
 
     const remainingMs = entry.expiresAt - now;
     const remainingMin = Math.round(remainingMs / 60000);
     console.log(`[cache] HIT: "${key}" (expires in ${remainingMin} min)`);
-    return entry.data as T;
+    return { data: entry.data as T, status: 'fresh' };
   }
 
   /**

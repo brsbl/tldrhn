@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 /**
  * Parse allowed CORS origins from environment variable.
  * Returns empty array if not set.
@@ -32,7 +34,7 @@ export function isOriginAllowed(
 }
 
 /**
- * Validate API key for protected endpoints.
+ * Validate API key for protected endpoints using constant-time comparison.
  * Returns true if no key is required or if the key matches.
  */
 export function validateApiKey(
@@ -49,5 +51,17 @@ export function validateApiKey(
     return false;
   }
 
-  return providedKey === requiredKey;
+  // Use constant-time comparison to prevent timing attacks
+  const providedBuffer = Buffer.from(providedKey);
+  const requiredBuffer = Buffer.from(requiredKey);
+
+  // If lengths differ, still perform comparison to maintain constant time
+  // but return false
+  if (providedBuffer.length !== requiredBuffer.length) {
+    // Compare against itself to maintain constant time behavior
+    crypto.timingSafeEqual(requiredBuffer, requiredBuffer);
+    return false;
+  }
+
+  return crypto.timingSafeEqual(providedBuffer, requiredBuffer);
 }

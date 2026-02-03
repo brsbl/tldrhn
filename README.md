@@ -100,7 +100,7 @@ tldrhn/
 │       ├── hn-api.ts      # Hacker News API client
 │       ├── scraper.ts     # Article content extraction
 │       ├── screenshot.ts  # Playwright screenshot capture
-│       ├── summarizer.ts  # Text excerpt generation
+│       ├── excerpt.ts     # Text excerpt generation
 │       └── url-validator.ts # SSRF protection
 ├── src/
 │   ├── App.tsx            # Main app component

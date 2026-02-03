@@ -26,10 +26,10 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         </div>
 
         {/* Error Message */}
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-neutral-100 mb-2">
+        <h2 className="text-xl font-semibold text-slate-800 dark:text-neutral-100 mb-2">
           Something went wrong
         </h2>
-        <p className="text-gray-600 dark:text-neutral-300 mb-6">{message}</p>
+        <p className="text-slate-600 dark:text-neutral-300 mb-6">{message}</p>
 
         {/* Retry Button */}
         <button
