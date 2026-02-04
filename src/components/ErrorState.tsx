@@ -6,7 +6,7 @@ interface ErrorStateProps {
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <div className="flex justify-center items-center py-20 px-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center border-l-4 border-red-500">
+      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center border-l-4 border-red-500">
         {/* Error Icon */}
         <div className="mb-4">
           <svg
@@ -26,15 +26,15 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         </div>
 
         {/* Error Message */}
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+        <h2 className="text-xl font-semibold text-slate-800 dark:text-neutral-100 mb-2">
           Something went wrong
         </h2>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">{message}</p>
+        <p className="text-slate-600 dark:text-neutral-300 mb-6">{message}</p>
 
         {/* Retry Button */}
         <button
           onClick={onRetry}
-          className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+          className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
         >
           Try Again
         </button>

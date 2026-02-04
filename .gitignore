@@ -25,3 +25,8 @@ dist-ssr
 
 # Environment variables
 .env
+
+# Project-specific
+TODO.md
+.otto/
+public/screenshots/

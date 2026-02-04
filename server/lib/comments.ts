@@ -24,7 +24,7 @@ export interface Comment {
  * @param html - HTML string to strip
  * @returns Plain text string
  */
-function stripHtmlTags(html: string): string {
+export function stripHtmlTags(html: string): string {
   // Replace <br> and </p> with newlines for readability
   let text = html
     .replace(/<br\s*\/?>/gi, '\n')
@@ -64,7 +64,7 @@ function stripHtmlTags(html: string): string {
  * @param textLength - Pre-calculated length of stripped text
  * @returns Numeric quality score
  */
-function calculateCommentScore(comment: HNComment, textLength: number): number {
+export function calculateCommentScore(comment: HNComment, textLength: number): number {
   let score = 0;
 
   // Length scoring

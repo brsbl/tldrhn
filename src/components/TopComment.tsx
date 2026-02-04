@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import DOMPurify, { type Config } from 'dompurify';
 import type { Comment } from '../types';
 
@@ -24,9 +24,10 @@ const SANITIZE_CONFIG: Config = {
  */
 export function TopComment({ comment }: TopCommentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const uniqueId = useId();
 
-  // Generate a unique ID for aria-controls
-  const contentId = `comment-content-${comment.id}`;
+  // Generate a unique ID for aria-controls using React's useId for uniqueness
+  const contentId = `${uniqueId}-content`;
 
   const toggleExpanded = () => {
     setIsExpanded((prev) => !prev);
@@ -37,17 +38,17 @@ export function TopComment({ comment }: TopCommentProps) {
   const sanitizedHtml = DOMPurify.sanitize(comment.text, SANITIZE_CONFIG);
 
   return (
-    <div className="mt-3 bg-gray-50 dark:bg-gray-700 border-l-4 border-orange-400 rounded-r-md">
+    <div className="mt-3 bg-slate-50 dark:bg-neutral-700 border-l-4 border-orange-400 rounded-r-md">
       {isExpanded ? (
         /* Expanded state: show full comment */
         <div className="p-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            <span className="text-sm font-medium text-slate-700 dark:text-neutral-200">
               Comment by <span className="text-orange-600 dark:text-orange-400">{comment.by}</span>
             </span>
             <button
               onClick={toggleExpanded}
-              className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 px-2 py-1 rounded transition-colors"
+              className="text-xs text-slate-500 dark:text-neutral-400 hover:text-slate-700 dark:hover:text-neutral-200 hover:bg-slate-100 dark:hover:bg-neutral-600 px-2 py-1 rounded transition-colors"
               aria-expanded={isExpanded}
               aria-controls={contentId}
               aria-label="Collapse comment"
@@ -58,7 +59,7 @@ export function TopComment({ comment }: TopCommentProps) {
           {/* Content is sanitized with DOMPurify before rendering to prevent XSS */}
           <div
             id={contentId}
-            className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+            className="text-sm text-slate-600 dark:text-neutral-300 leading-relaxed prose prose-sm dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
           />
         </div>
@@ -66,15 +67,15 @@ export function TopComment({ comment }: TopCommentProps) {
         /* Collapsed state: show preview with expand button */
         <button
           onClick={toggleExpanded}
-          className="w-full p-3 text-left flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 rounded-r-md transition-colors"
+          className="w-full p-3 text-left flex items-center justify-between hover:bg-slate-100 dark:hover:bg-neutral-600 rounded-r-md transition-colors"
           aria-expanded={isExpanded}
           aria-controls={contentId}
           aria-label="Expand comment"
         >
-          <span className="text-sm text-gray-600 dark:text-gray-300">
+          <span className="text-sm text-slate-600 dark:text-neutral-300">
             Top comment by <span className="font-medium text-orange-600 dark:text-orange-400">{comment.by}</span>
           </span>
-          <span className="text-xs text-gray-400 dark:text-gray-500 ml-2">
+          <span className="text-xs text-slate-400 dark:text-neutral-500 ml-2">
             Click to expand
           </span>
         </button>

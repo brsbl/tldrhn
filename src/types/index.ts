@@ -46,10 +46,14 @@ export interface Story {
   time: number;
   /** Number of comments on the story */
   descendants: number;
-  /** AI-generated summary of the article content */
-  summary: string;
+  /** Excerpt from the article content (first ~200 chars) */
+  excerpt: string;
   /** URL path to the captured screenshot image */
   screenshotUrl: string;
+  /** Direct URL to the article's hero/og image (if available) */
+  heroImageUrl?: string;
+  /** True if screenshot is a fallback (HN page, not actual article) */
+  isImageFallback?: boolean;
   /** The highest-quality comment on this story, or null if none */
   topComment: Comment | null;
   /** Unix timestamp of when this data was fetched/cached */
